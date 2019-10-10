@@ -1,0 +1,12 @@
+diff --git a/ci/setup_utils.py b/ci/setup_utils.py
+index 725aae89..73631d55 100644
+--- a/ci/setup_utils.py
++++ b/ci/setup_utils.py
+@@ -29,6 +29,7 @@ import sysconfig
+ import tempfile
+ from functools import lru_cache as memoize
+ from distutils.errors import DistutilsExecError, CompileError
++import shutil
+
+ __all__ = (
+     "find_linked_dynamic_libraries",

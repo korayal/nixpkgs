@@ -19,6 +19,10 @@ buildPythonPackage rec {
     sha256 = "1shwjkm9nyaj6asn57vwdd74pn13pggh14r6dzv729lzxm7nm65f";
   };
 
+  postFixup = lib.optionalString stdenv.isDarwin ''
+    install_name_tool -change "@rpath/libc++.1.0.dylib" "${lib.getLib libcxx}/lib/libc++.1.dylib" "$out/lib/python3.7/site-packages/datatable/lib/_datatable.cpython-37m-darwin.so"
+  '';
+
   patches = lib.optionals stdenv.isDarwin [
     # Replace the library auto-detection with hardcoded paths.
     (substituteAll {
@@ -28,6 +32,10 @@ buildPythonPackage rec {
       libcxx_dylib = "${lib.getLib libcxx}/lib/libc++.1.dylib";
       libcxxabi_dylib = "${lib.getLib libcxxabi}/lib/libc++abi.dylib";
     })
+    # v0.9.0 is missing the import of shutil, which is only used for darwin
+    # should be removed on v0.10.0:
+    # https://github.com/h2oai/datatable/issues/2070
+    ./import_shutil.patch
   ];
 
   propagatedBuildInputs = [ typesentry blessed ];
